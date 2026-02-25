@@ -623,6 +623,111 @@
             border-radius: 8px;
         }
 
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--pale-blue);
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.25rem 0.5rem;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-stat {
+            background: var(--bg-cream);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-stat .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-stat .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .modal-stat.dem .value { color: var(--dem-blue); }
+        .modal-stat.swing .value { color: var(--swing-purple); }
+
+        .modal-table-container {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header {
@@ -920,41 +1025,58 @@
                 <h2>Select Senate District (SD)</h2>
                 <div class="district-grid" id="sdGrid"></div>
             </div>
+        </div>
 
-            <div class="category-section" id="districtDetail" style="display:none;">
-                <h2 id="districtTitle">District Details</h2>
-                <div class="incumbent-info">
-                    <strong>Incumbent:</strong> <span id="dist-incumbent">-</span>
+        <!-- District Detail Modal -->
+        <div class="modal-overlay" id="districtModal" onclick="closeModalOnOverlay(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="districtTitle">
+                        District Details
+                        <button class="btn-flag" id="districtFlagBtn" onclick="toggleDistrictFlagFromModal()">☆ Flag as Target</button>
+                    </h2>
+                    <button class="modal-close" onclick="closeDistrictModal()">&times;</button>
                 </div>
-                <div class="dashboard-grid">
-                    <div class="stat-card dem">
-                        <h3>District Dem Perf</h3>
-                        <div class="value" id="dist-demperf">-</div>
+                <div class="modal-body">
+                    <div class="incumbent-info" style="font-size: 1.2rem; text-align: center; padding: 1rem 1.5rem; margin-bottom: 1.25rem;">
+                        <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.35rem;">Current Incumbent</div>
+                        <span id="dist-incumbent" style="font-size: 1.35rem;">-</span>
                     </div>
-                    <div class="stat-card swing">
-                        <h3>District Persuasion</h3>
-                        <div class="value" id="dist-perfrange">-</div>
+                    <div class="modal-stats">
+                        <div class="modal-stat dem">
+                            <div class="label">Dem Performance</div>
+                            <div class="value" id="dist-demperf">-</div>
+                        </div>
+                        <div class="modal-stat swing">
+                            <div class="label">Persuasion Range</div>
+                            <div class="value" id="dist-perfrange">-</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="label">Expected Vote 2026</div>
+                            <div class="value" id="dist-expvote">-</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="label">Precincts</div>
+                            <div class="value" id="dist-precincts">-</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <h3>Expected Vote</h3>
-                        <div class="value" id="dist-expvote">-</div>
+                    <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Precincts in District</h3>
+                    <div class="modal-table-container">
+                        <table class="data-table" id="districtTable">
+                            <thead>
+                                <tr>
+                                    <th>Flag</th>
+                                    <th>County</th>
+                                    <th>Precinct</th>
+                                    <th class="num">Dem Perf</th>
+                                    <th class="num">Persuasion</th>
+                                    <th class="num">Exp Vote</th>
+                                    <th class="num">Gov 25</th>
+                                </tr>
+                            </thead>
+                            <tbody id="districtBody"></tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="table-scroll" style="margin-top: 1rem;">
-                    <table class="data-table" id="districtTable">
-                        <thead>
-                            <tr>
-                                <th>Flag</th>
-                                <th>County</th>
-                                <th>Precinct</th>
-                                <th class="num">Dem Perf</th>
-                                <th class="num">Persuasion</th>
-                                <th class="num">Exp Vote</th>
-                                <th class="num">Gov 25</th>
-                            </tr>
-                        </thead>
-                        <tbody id="districtBody"></tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -1254,7 +1376,14 @@
             sdGrid.innerHTML = sdHtml;
         }
 
+        // Track current district for modal actions
+        let currentDistrictType = null;
+        let currentDistrictNum = null;
+
         function selectDistrict(type, district) {
+            currentDistrictType = type;
+            currentDistrictNum = district;
+
             // Update button states - clear all first
             document.querySelectorAll('.district-btn').forEach(btn => {
                 btn.classList.remove('selected');
@@ -1281,18 +1410,26 @@
             const districtLabel = type === 'hd' ? `House District ${district}` : `Senate District ${district}`;
             const flagKey = `${type}-${district}`;
             const isFlagged = flaggedTargets[flagKey];
-            const flagBtnText = isFlagged ? '⭐ Flagged as Target' : '☆ Flag District as Target';
-            const flagBtnClass = isFlagged ? 'btn-flag flagged' : 'btn-flag';
+            
+            // Update flag button
+            const flagBtn = document.getElementById('districtFlagBtn');
+            if (isFlagged) {
+                flagBtn.textContent = '⭐ Flagged as Target';
+                flagBtn.classList.add('flagged');
+            } else {
+                flagBtn.textContent = '☆ Flag as Target';
+                flagBtn.classList.remove('flagged');
+            }
 
             document.getElementById('districtTitle').innerHTML = `
                 ${districtLabel}
-                <button class="${flagBtnClass}" onclick="toggleDistrictFlag('${type}', ${district})" style="margin-left: 1rem; font-size: 0.85rem;">${flagBtnText}</button>
+                <button class="btn-flag ${isFlagged ? 'flagged' : ''}" id="districtFlagBtn" onclick="toggleDistrictFlagFromModal()">${isFlagged ? '⭐ Flagged' : '☆ Flag as Target'}</button>
             `;
             document.getElementById('dist-incumbent').innerHTML = `<span style="color: ${partyColor}; font-weight: 600;">${member.name}</span> <span style="color: var(--text-muted);">(${partyLabel})</span>`;
             document.getElementById('dist-demperf').textContent = formatPercent(weightedDemPerf);
             document.getElementById('dist-perfrange').textContent = formatPercent(weightedPerfRange);
             document.getElementById('dist-expvote').textContent = formatNumber(totalExpVote);
-            document.getElementById('districtDetail').style.display = 'block';
+            document.getElementById('dist-precincts').textContent = districtPrecincts.length;
 
             // Render table
             const tbody = document.getElementById('districtBody');
@@ -1315,6 +1452,27 @@
                 `;
             });
             tbody.innerHTML = html;
+
+            // Open the modal
+            document.getElementById('districtModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeDistrictModal() {
+            document.getElementById('districtModal').classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target === document.getElementById('districtModal')) {
+                closeDistrictModal();
+            }
+        }
+
+        function toggleDistrictFlagFromModal() {
+            if (currentDistrictType && currentDistrictNum) {
+                toggleDistrictFlag(currentDistrictType, currentDistrictNum);
+            }
         }
 
         function toggleDistrictFlag(type, district) {
@@ -1349,7 +1507,12 @@
             localStorage.setItem('vaTargets', JSON.stringify(flaggedTargets));
             updateTargetsBadge();
             renderDistrictGrid();
-            selectDistrict(type, district); // Refresh the display
+            
+            // Refresh the modal display if it's open
+            if (document.getElementById('districtModal').classList.contains('active')) {
+                selectDistrict(type, district);
+            }
+            
             renderTargetsList();
         }
 

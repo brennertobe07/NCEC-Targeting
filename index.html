@@ -512,6 +512,17 @@
         .perf-7 { background: #CB181D; color: white; }
         .perf-8 { background: #67000D; color: white; }
 
+        .county-link {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.12s;
+        }
+
+        .county-link:hover {
+            color: var(--dem-lt);
+            text-decoration: underline;
+        }
+
         .flag-btn {
             background: none;
             border: none;
@@ -1780,7 +1791,7 @@ UDk/hX7zfCL/AINOPhd4dngm8YePfFPiXy23SW1pDFYwy/8AAhlx+dfcf7MH/BLT4F/sg+VJ4K+H
                 html += `
                     <tr class="${flagged}" data-id="county-${d.county}">
                         <td><button class="flag-btn ${flagged}" onclick="toggleFlag('county', '${d.county}')">${flagIcon}</button></td>
-                        <td><strong>${d.county}</strong></td>
+                        <td><a href="#" class="county-link" onclick="drillToPrecincts('${d.county}'); return false;"><strong>${d.county}</strong></a></td>
                         <td><span class="perf-badge perf-${d.perfCat}">${PERF_CATEGORIES[d.perfCat]}</span></td>
                         <td class="num">${formatPercent(d.demperf26)}</td>
                         <td class="num">${formatPercent(d.perfrange26)}</td>
@@ -1794,6 +1805,15 @@ UDk/hX7zfCL/AINOPhd4dngm8YePfFPiXy23SW1pDFYwy/8AAhlx+dfcf7MH/BLT4F/sg+VJ4K+H
             
             tbody.innerHTML = html;
             document.getElementById('countyCount').textContent = `Showing ${tableData.length} of ${countyData.length} counties`;
+        }
+
+        function drillToPrecincts(county) {
+            // Set the county filter
+            document.getElementById('precinctCountyFilter').value = county;
+            // Switch to precincts tab
+            switchTab('precincts');
+            // Trigger filter
+            filterPrecincts();
         }
 
         function filterCounties() {

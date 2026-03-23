@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vantage | VA Election Explorer</title>
+    <title>Vantage | DPVA</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
@@ -282,33 +282,36 @@
         .cat-8 { background: #67000D; }
 
         .category-legend {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 20px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            padding: 4px 0;
+            gap: 5px;
+            font-size: 0.72rem;
+            padding: 3px 0;
             color: var(--text);
             white-space: nowrap;
         }
 
         .legend-color {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 2px;
             flex-shrink: 0;
         }
 
+        .legend-item .label {
+            color: var(--text);
+        }
+
         .legend-item .count {
             font-family: var(--mono);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            margin-left: auto;
         }
 
         /* Search and Filters */
@@ -1332,7 +1335,7 @@ UDk/hX7zfCL/AINOPhd4dngm8YePfFPiXy23SW1pDFYwy/8AAhlx+dfcf7MH/BLT4F/sg+VJ4K+H
 2h2mpRgA6ldRC7vWPqZZMn8sVx1+JcPBP2SuzrocOVpP95ofh9/wTj/4N5Pir+15qOna58QLe6+G
 3gEssrtdwAapqMfUrBCf9WD/AM9HAPOQua/fz9lr9lDwP+xx8JdP8F+AdCtdE0SwGcIMy3Eh+9LK
 55d2PUmvSI4Qh6AY54qTGcV8nj8zr4p++9D6fBZbSwy91XYxRhafQ3Q0V5yVtD0tep//2Q==" alt="VA Dems" style="height:36px;background:#fff;border-radius:6px;padding:3px 8px;opacity:0.95;">
-            <h1>Election Explorer</h1>
+            <h1>Vantage</h1>
             <span>NCEC Targeting Data · 2026 Cycle</span>
         </div>
         <div class="header-actions">
@@ -1726,7 +1729,7 @@ UDk/hX7zfCL/AINOPhd4dngm8YePfFPiXy23SW1pDFYwy/8AAhlx+dfcf7MH/BLT4F/sg+VJ4K+H
                 legendHTML += `
                     <div class="legend-item">
                         <div class="legend-color cat-${i}"></div>
-                        <span>${PERF_CATEGORIES[i]}</span>
+                        <span class="label">${PERF_CATEGORIES[i]}</span>
                         <span class="count">${catCounts[i]}</span>
                     </div>
                 `;
